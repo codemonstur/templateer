@@ -6,8 +6,8 @@
     <version>0.1.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>A clean and simple XML parser, serializer, and deserializer.</description>
-    <url>https://github.com/codemonstur/simplexml</url>
+    <description>A small utility for applying a properties file to a template.</description>
+    <url>https://github.com/codemonstur/templateer</url>
 
     <licenses>
         <license>
@@ -18,9 +18,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/codemonstur/simplexml.git</connection>
-        <developerConnection>scm:git:https://github.com/codemonstur/simplexml.git</developerConnection>
-        <url>https://github.com/codemonstur/simplexml</url>
+        <connection>scm:git:https://github.com/codemonstur/templateer.git</connection>
+        <developerConnection>scm:git:https://github.com/codemonstur/templateer.git</developerConnection>
+        <url>https://github.com/codemonstur/templateer</url>
         <tag>HEAD</tag>
     </scm>
 
