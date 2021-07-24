@@ -1,8 +1,9 @@
-name: templateer
-version: 0.1.0
+include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-app-github
+
+version: 1
+packaging: bob-plugin
+enablePreview: false
 dependencies:
-  - repository: com.github.codemonstur:jcli:0.9.7
-  - repository: com.mitchellbosecke:pebble:2.1.0
   - repository: de.neuland-bfi:jade4j:1.2.7
   - repository: com.vladsch.flexmark:flexmark-all:0.50.40
   - repository: com.github.jknack:handlebars:4.1.2
@@ -10,23 +11,5 @@ dependencies:
   - repository: com.hubspot.jinjava:jinjava:2.5.2
   - repository: org.trimou:trimou-core:2.5.0.Final
   - repository: org.thymeleaf:thymeleaf:3.0.11.RELEASE
-
-build
-    echo [${PROJECT_NAME}] Building
-    run-target -i clean build
-
-release-notes
-    echo [${PROJECT_NAME}] Writing release notes to src/docs/releases/release-${PROJECT_VERSION}.txt
-    echo ${PROJECT_VERSION} > src/docs/releases/release-${PROJECT_VERSION}.txt
-    echo "" >> src/docs/releases/release-${PROJECT_VERSION}.txt
-    PREVIOUS_TAG = `git tag | sort -r | head -n 1`
-    git log --pretty="%s" ${PREVIOUS_TAG}... master >> src/docs/releases/release-${PROJECT_VERSION}.txt
-
-deploy
-    echo [${PROJECT_NAME}] Clean and build for deploy
-    run-target -i clean build
-    echo [${PROJECT_NAME}] Tagging and pushing to github
-    git tag ${PROJECT_NAME}-${PROJECT_VERSION}
-    git push && git push --tags
-    echo [${PROJECT_NAME}] Creating github release
-    hub release create -a target/${PROJECT_NAME}-${PROJECT_VERSION}.jar -F src/docs/releases/release-${PROJECT_VERSION}.txt ${PROJECT_NAME}-${PROJECT_VERSION}
+  - project: ../bobthebuildtool
+    scope: provided
