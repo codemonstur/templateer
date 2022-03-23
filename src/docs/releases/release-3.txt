@@ -1,0 +1,3 @@
+3
+
+Disabled new line trimming in pebble
