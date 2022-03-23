@@ -1,13 +1,16 @@
-package templateer.core;
+package templateer;
 
-import templateer.model.Arguments;
+import templateer.BobPlugin.Arguments;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public enum IO {;
+public enum Functions {;
 
     public static String toExtension(final File inFile) {
         final String name = inFile.getName();
@@ -15,9 +18,9 @@ public enum IO {;
         return index == -1 ? "" : name.substring(index);
     }
 
-    public static Map<String, Object> loadModel(final Arguments arguments) throws IOException {
+    public static Map<String, Object> loadModel(final Arguments arguments, final Map<String, String> environment) throws IOException {
         final var model = new HashMap<String, Object>();
-        if (arguments.loadEnv) model.putAll(System.getenv());
+        if (arguments.loadEnv) model.putAll(environment);
         if (!isNullOrEmpty(arguments.modelFile)) {
             final Properties props = new Properties();
             try (final Reader reader = new FileReader(arguments.modelFile)) {
