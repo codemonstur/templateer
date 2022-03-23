@@ -51,7 +51,8 @@ public enum TemplateEngine {
     pebble() {
         public String processTemplate(final File file, final Map<String, Object> model) throws IOException {
             try {
-                final PebbleTemplate template = new PebbleEngine.Builder().build().getTemplate(file.getAbsolutePath());
+                final PebbleTemplate template = new PebbleEngine.Builder().newLineTrimming(false)
+                        .build().getTemplate(file.getAbsolutePath());
                 try (final StringWriter writer = new StringWriter()) {
                     template.evaluate(writer, model);
                     return writer.toString();
