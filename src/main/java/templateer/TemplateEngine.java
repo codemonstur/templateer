@@ -2,10 +2,10 @@ package templateer;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.hubspot.jinjava.Jinjava;
-import com.mitchellbosecke.pebble.PebbleEngine;
-import com.mitchellbosecke.pebble.error.PebbleException;
-import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import de.neuland.jade4j.Jade4J;
+import io.pebbletemplates.pebble.PebbleEngine;
+import io.pebbletemplates.pebble.error.PebbleException;
+import io.pebbletemplates.pebble.template.PebbleTemplate;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 import org.thymeleaf.context.IContext;
@@ -57,7 +57,7 @@ public enum TemplateEngine {
                     template.evaluate(writer, model);
                     return writer.toString();
                 }
-            } catch (PebbleException e) {
+            } catch (final PebbleException e) {
                 throw new IOException(e);
             }
         }
@@ -68,13 +68,13 @@ public enum TemplateEngine {
                 public Locale getLocale() {
                     return Locale.getDefault();
                 }
-                public boolean containsVariable(String s) {
+                public boolean containsVariable(final String s) {
                     return model.containsKey(s);
                 }
                 public Set<String> getVariableNames() {
                     return model.keySet();
                 }
-                public Object getVariable(String s) {
+                public Object getVariable(final String s) {
                     return model.get(s);
                 }
             };
@@ -88,7 +88,7 @@ public enum TemplateEngine {
         if (type != null) return type;
         try {
             return TemplateEngine.valueOf(toExtension(inputFile));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return pebble;
         }
     }
