@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static bobthebuildtool.services.Update.requireBobVersion;
+import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.writeString;
 import static java.nio.file.StandardOpenOption.*;
 import static jcli.CliParser.parseCommandLineArguments;
@@ -24,7 +25,7 @@ public enum BobPlugin {;
 
     public static void installPlugin(final Project project) throws VersionTooOld {
         requireBobVersion("7");
-        project.addCommand("template", DESCRIPTION_TEMPLATE, BobPlugin::template);
+        project.addCommand("templateer", DESCRIPTION_TEMPLATE, BobPlugin::template);
     }
 
     @CliCommand(name = "templateer", description = "Command line tool to apply a set of variables to a template")
@@ -48,6 +49,8 @@ public enum BobPlugin {;
         final var engine = selectEngine(arguments.type, arguments.inputFile);
 
         final var output = engine.processTemplate(arguments.inputFile, model);
+        final var parent = arguments.outputFile.toAbsolutePath().getParent();
+        if (parent != null) createDirectories(parent);
         writeString(arguments.outputFile, output, CREATE, WRITE, TRUNCATE_EXISTING);
 
         return 0;

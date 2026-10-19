@@ -3,9 +3,11 @@ package templateer;
 import templateer.BobPlugin.Arguments;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,8 +16,8 @@ public enum Functions {;
 
     public static String toExtension(final File inFile) {
         final String name = inFile.getName();
-        final int index = name.indexOf('.');
-        return index == -1 ? "" : name.substring(index);
+        final int index = name.lastIndexOf('.');
+        return index == -1 ? "" : name.substring(index + 1);
     }
 
     public static Map<String, Object> loadModel(final Arguments arguments, final Map<String, String> environment) throws IOException {
@@ -23,7 +25,7 @@ public enum Functions {;
         if (arguments.loadEnv) model.putAll(environment);
         if (!isNullOrEmpty(arguments.modelFile)) {
             final Properties props = new Properties();
-            try (final Reader reader = new FileReader(arguments.modelFile)) {
+            try (final Reader reader = new InputStreamReader(new FileInputStream(arguments.modelFile), StandardCharsets.UTF_8)) {
                 props.load(reader);
             }
             props.forEach((o, o2) -> model.put(o.toString(), o2.toString()));
