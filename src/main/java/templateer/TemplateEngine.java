@@ -1,17 +1,12 @@
 package templateer;
 
 import com.github.jknack.handlebars.Handlebars;
-import com.hubspot.jinjava.Jinjava;
-import de.neuland.jade4j.Jade4J;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.error.PebbleException;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
-import org.thymeleaf.context.IContext;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.trimou.engine.MustacheEngineBuilder;
@@ -20,10 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import static templateer.Functions.toExtension;
 
@@ -31,21 +24,6 @@ public enum TemplateEngine {
     handlebars() {
         public String processTemplate(final File file, final Map<String, Object> model) throws IOException {
             return new Handlebars().compile(file.getAbsolutePath()).apply(model);
-        }
-    },
-    jade() {
-        public String processTemplate(final File file, final Map<String, Object> model) throws IOException {
-            return Jade4J.render(file.getAbsolutePath(), model);
-        }
-    },
-    jinjava() {
-        public String processTemplate(final File file, final Map<String, Object> model) throws IOException {
-            return new Jinjava().render(Files.readString(file.toPath()), model);
-        }
-    },
-    jtwig() {
-        public String processTemplate(final File file, final Map<String, Object> model) {
-            return JtwigTemplate.fileTemplate(file).render(JtwigModel.newModel(model));
         }
     },
     mustache() {
@@ -66,25 +44,6 @@ public enum TemplateEngine {
             } catch (final PebbleException e) {
                 throw new IOException(e);
             }
-        }
-    },
-    thymeleaf() {
-        public String processTemplate(final File file, final Map<String, Object> model) throws IOException {
-            final IContext context = new IContext() {
-                public Locale getLocale() {
-                    return Locale.getDefault();
-                }
-                public boolean containsVariable(final String s) {
-                    return model.containsKey(s);
-                }
-                public Set<String> getVariableNames() {
-                    return model.keySet();
-                }
-                public Object getVariable(final String s) {
-                    return model.get(s);
-                }
-            };
-            return new org.thymeleaf.TemplateEngine().process(Files.readString(file.toPath()), context);
         }
     },
     freemarker() {

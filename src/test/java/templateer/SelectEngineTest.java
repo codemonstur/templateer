@@ -11,6 +11,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static templateer.TemplateEngine.*;
+import static templateer.TemplateEngine.mustache;
 
 public class SelectEngineTest {
 
@@ -19,34 +21,33 @@ public class SelectEngineTest {
 
     @Test
     void autoDetectsStandardExtensions() {
-        assertEquals(TemplateEngine.mustache, TemplateEngine.selectEngine(null, new File("t.mustache")));
-        assertEquals(TemplateEngine.pebble, TemplateEngine.selectEngine(null, new File("t.pebble")));
-        assertEquals(TemplateEngine.thymeleaf, TemplateEngine.selectEngine(null, new File("t.thymeleaf")));
-        assertEquals(TemplateEngine.handlebars, TemplateEngine.selectEngine(null, new File("t.handlebars")));
+        assertEquals(mustache, selectEngine(null, new File("t.mustache")));
+        assertEquals(pebble, selectEngine(null, new File("t.pebble")));
+        assertEquals(handlebars, selectEngine(null, new File("t.handlebars")));
     }
 
     @Test
     void autoDetectsAliasedExtensions() {
-        assertEquals(TemplateEngine.freemarker, TemplateEngine.selectEngine(null, new File("t.ftl")));
-        assertEquals(TemplateEngine.velocity, TemplateEngine.selectEngine(null, new File("t.vm")));
+        assertEquals(freemarker, selectEngine(null, new File("t.ftl")));
+        assertEquals(velocity, selectEngine(null, new File("t.vm")));
     }
 
     @Test
     void multiDotFilenameUsesLastExtension() {
-        assertEquals(TemplateEngine.freemarker, TemplateEngine.selectEngine(null, new File("my.template.ftl")));
-        assertEquals(TemplateEngine.velocity, TemplateEngine.selectEngine(null, new File("a.b.c.vm")));
+        assertEquals(freemarker, selectEngine(null, new File("my.template.ftl")));
+        assertEquals(velocity, selectEngine(null, new File("a.b.c.vm")));
     }
 
     @Test
     void unknownExtensionFallsBackToPebble() {
-        assertEquals(TemplateEngine.pebble, TemplateEngine.selectEngine(null, new File("t.unknown")));
-        assertEquals(TemplateEngine.pebble, TemplateEngine.selectEngine(null, new File("noextension")));
+        assertEquals(pebble, selectEngine(null, new File("t.unknown")));
+        assertEquals(pebble, selectEngine(null, new File("noextension")));
     }
 
     @Test
     void explicitTypeOverridesFile() {
-        assertEquals(TemplateEngine.velocity, TemplateEngine.selectEngine(TemplateEngine.velocity, new File("t.ftl")));
-        assertEquals(TemplateEngine.mustache, TemplateEngine.selectEngine(TemplateEngine.mustache, new File("t.ftl")));
+        assertEquals(velocity, selectEngine(velocity, new File("t.ftl")));
+        assertEquals(mustache, selectEngine(mustache, new File("t.ftl")));
     }
 
     @Test
@@ -69,4 +70,5 @@ public class SelectEngineTest {
         return (int) method.invoke(null, null, env, new String[]{
             "-f", input.getAbsolutePath(), "-o", output.getAbsolutePath(), "-e"});
     }
+
 }

@@ -35,20 +35,18 @@
 
         <version.library.bobthebuildtool>12</version.library.bobthebuildtool>
         <version.library.jcli>2.0.0</version.library.jcli>
-        <version.library.jade4j>1.3.2</version.library.jade4j>
         <version.library.handlebars>4.5.7</version.library.handlebars>
-        <version.library.jtwig>5.87.0.RELEASE</version.library.jtwig>
-        <version.library.jinjava>2.8.4</version.library.jinjava>
         <version.library.trimou>2.5.1.Final</version.library.trimou>
-        <version.library.thymeleaf>3.1.5.RELEASE</version.library.thymeleaf>
         <version.library.pebble>4.1.2</version.library.pebble>
         <version.library.freemarker>2.3.35</version.library.freemarker>
         <version.library.velocity>2.4.1</version.library.velocity>
         <version.library.slf4j>2.0.20</version.library.slf4j>
+        <version.library.junit>6.1.3</version.library.junit>
 
         <version.plugin.check-cves>1.1.0</version.plugin.check-cves>
         <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
         <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
+        <version.plugin.surefire>3.6.0</version.plugin.surefire>
         <version.plugin.jar>3.5.1</version.plugin.jar>
         <version.plugin.license-check>1.3.0</version.plugin.license-check>
         <version.plugin.shade>3.6.2</version.plugin.shade>
@@ -70,39 +68,15 @@
         </dependency>
 
         <dependency>
-            <groupId>de.neuland-bfi</groupId>
-            <artifactId>jade4j</artifactId>
-            <version>${version.library.jade4j}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
             <version>${version.library.handlebars}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.jtwig</groupId>
-            <artifactId>jtwig-core</artifactId>
-            <version>${version.library.jtwig}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hubspot.jinjava</groupId>
-            <artifactId>jinjava</artifactId>
-            <version>${version.library.jinjava}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.trimou</groupId>
             <artifactId>trimou-core</artifactId>
             <version>${version.library.trimou}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>${version.library.thymeleaf}</version>
         </dependency>
 
         <dependency>
@@ -126,7 +100,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>6.1.3</version>
+            <version>${version.library.junit}</version>
             <scope>test</scope>
         </dependency>
 
@@ -165,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${version.plugin.surefire}</version>
             </plugin>
 
             <plugin>
@@ -252,6 +226,11 @@
                         <configuration>
                             <includeTestDependencies>true</includeTestDependencies>
                             <rules>
+                                <rule>name:regex:BSD(\s|-)3-Clause( License)?</rule>
+                                <rule>name:equal:GNU General Public License v2.0 w/Classpath exception</rule>
+                                <rule>url:regex:http(s)?://www.apache.org/licenses/LICENSE-2.0.txt</rule>
+                                <rule>url:equal:https://www.eclipse.org/legal/epl-v20.html</rule>
+                                <rule>url:regex:https://opensource.org/license(s)?/(mit|MIT)</rule>
                             </rules>
                         </configuration>
                     </plugin>
