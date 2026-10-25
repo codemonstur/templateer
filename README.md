@@ -66,18 +66,17 @@ templateer -f input.txt -o output.txt -m vars.properties -t thymeleaf
 
 ## As a Bob plugin
 
-Add the plugin to your `bobfile`:
+Add the plugin to the top of your `bobfile`:
 
-```yaml
-dependencies:
-  - repository: com.github.codemonstur:templateer:6
+```
+plugin codemonstur/templateer:6
 ```
 
 Then use the `templateer` command in any task:
 
-```yaml
+```
 my-task
-  templateer -f config/app.properties.template -o config/app.properties -m vars.properties
+    templateer -f config/app.properties.template -o config/app.properties -m vars.properties
 ```
 
 ## Building
