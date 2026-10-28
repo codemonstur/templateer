@@ -1,0 +1,10 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": ".*\\.js"},
+      {"pattern": ".*\\.properties"},
+      {"pattern": ".*\\.ftl"},
+      {"pattern": "freemarker/.*"}
+    ]
+  }
+}

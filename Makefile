@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help clean build test coverage validate release-notes deploy
 
-NAME=`xmllint --xpath "//project/artifactId/text()" pom.xml`
+NAME=`xmllint --xpath "//project/artifactId/text()" templateer-cli/pom.xml`
 VERSION=`xmllint --xpath "//project/version/text()" pom.xml`
 PREVIOUS_TAG=`git tag | sort -r | head -n 1`
 
@@ -14,7 +14,7 @@ endif
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z0-9_.-]+:' $(MAKEFILE_LIST) | grep -vE '^[a-zA-Z0-9_.-]+:=' | \
-		awk 'BEGIN {FS = ":"} /^\./ {next} {name = $$1; sub(/[[:blank:]]+$$/, "", name); doc = $$0; sub(/^[^#]*## /, "", doc); if (doc == $$0) sub(/^[^:]*:[[:blank:]]*/, "", doc); printf "  \033[36m%-10s\033[0m %s\n", name, doc}'
+		awk 'BEGIN {FS = ":"} /^\./ {next} {name = $$1; sub(/[[:blank:]]+$$/, "", name); doc = $$0; sub(/^[^#]*## /, "", doc); if (doc == $$0) sub(/^[^:]*:[[:blank:]]*/, "", doc); printf "  \033[36m%-20s\033[0m %s\n", name, doc}'
 
 clean: ## Delete everything in ./target
 	@$(INFO) "Cleaning"
@@ -23,6 +23,10 @@ clean: ## Delete everything in ./target
 build: ## Cleans the project and rebuilds the code
 	@$(INFO) "Building"
 	@mvn -DskipTests clean package
+
+native: build ## Build a native binary with GraalVM
+	@native-image --no-fallback -jar templateer-cli/target/templateer.jar -o templateer-cli/target/templateer
+	@chmod +x templateer-cli/target/templateer
 
 test: ## Runs the tests
 	@mvn test
@@ -35,10 +39,11 @@ coverage: ## Run tests and generate a jacoco coverage report
 	printf '%s\n' "$$output" | while IFS= read -r line; do $(INFO) "$$line"; done
 
 validate: ## Check dependency versions, cves, licenses, and code quality
+	@mvn com.github.codemonstur:maven-check-pom:1.0.0:check validate
+	@mvn com.github.codemonstur:maven-check-pom:1.0.0:reorder
 	@mvn versions:display-dependency-updates "-Dmaven.version.ignore=(?i).*(alpha|beta|rc|-m[0-9]+|snapshot).*"
 	@mvn versions:display-plugin-updates
-	@mvn validate -P vulnerabilities
-	@mvn validate -P licenses
+	@mvn verify -P vulnerabilities,licenses -DskipTests -T 1C
 	@mvn validate -P codequality
 
 release-notes: ## Write release notes in src/docs/releases for the current version
@@ -52,7 +57,7 @@ deploy: ## Clean, build and deploy a version to Github and Maven Central
 	@$(INFO) "Uploading to maven central"
 	@mvn clean deploy
 	@$(INFO) "Creating github release"
-	@gh release create $(NAME)-$(VERSION) target/$(NAME).jar target/$(NAME)-javadoc.jar target/$(NAME)-sources.jar -F src/docs/releases/release-$(VERSION).txt
+	@gh release create $(NAME)-$(VERSION) templateer-cli/target/$(NAME).jar templateer-cli/target/$(NAME)-javadoc.jar templateer-cli/target/$(NAME)-sources.jar -F src/docs/releases/release-$(VERSION).txt
 	@$(INFO) "Tagging and pushing to github"
 	@git tag $(NAME)-$(VERSION)
 	@git push && git push --tags

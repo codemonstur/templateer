@@ -1,0 +1,23 @@
+[
+  {
+    "name": "templateer.Main$Arguments",
+    "queryAllDeclaredConstructors": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true,
+    "allPublicFields": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "templateer.TemplateEngine",
+    "queryAllDeclaredConstructors": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true,
+    "allPublicFields": true,
+    "allDeclaredFields": true
+  }
+]

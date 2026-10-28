@@ -1,7 +1,5 @@
 package templateer;
 
-import bobthebuildtool.pojos.buildfile.Project;
-import bobthebuildtool.pojos.error.VersionTooOld;
 import jcli.annotations.CliCommand;
 import jcli.annotations.CliOption;
 import jcli.errors.InvalidCommandLine;
@@ -9,24 +7,17 @@ import jcli.errors.InvalidCommandLine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 
-import static bobthebuildtool.services.Update.requireBobVersion;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.writeString;
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static jcli.CliParser.parseCommandLineArguments;
 import static templateer.Functions.loadModel;
 import static templateer.TemplateEngine.selectEngine;
 
-public enum BobPlugin {;
-
-    private static final String DESCRIPTION_TEMPLATE = "Applies a set of variables to a template, writes the result";
-
-    public static void installPlugin(final Project project) throws VersionTooOld {
-        requireBobVersion("7");
-        project.addCommand("templateer", DESCRIPTION_TEMPLATE, BobPlugin::template);
-    }
+public final class Main {;
 
     @CliCommand(name = "templateer", description = "Command line tool to apply a set of variables to a template")
     public static class Arguments {
@@ -42,18 +33,22 @@ public enum BobPlugin {;
         public TemplateEngine type;
     }
 
-    private static int template(final Project project, final Map<String, String> environment, final String[] args)
-            throws InvalidCommandLine, IOException {
-        final var arguments = parseCommandLineArguments(args, Arguments::new);
-        final var model = loadModel(arguments, environment);
-        final var engine = selectEngine(arguments.type, arguments.inputFile);
+    public static void main(final String[] args) {
+        try {
+            final var arguments = parseCommandLineArguments(args, Arguments::new);
+            final var model = loadModel(arguments.modelFile, arguments.loadEnv, System.getenv());
+            final var engine = selectEngine(arguments.type, arguments.inputFile);
 
-        final var output = engine.processTemplate(arguments.inputFile, model);
-        final var parent = arguments.outputFile.toAbsolutePath().getParent();
-        if (parent != null) createDirectories(parent);
-        writeString(arguments.outputFile, output, CREATE, WRITE, TRUNCATE_EXISTING);
-
-        return 0;
+            final var output = engine.processTemplate(arguments.inputFile, model);
+            final var parent = arguments.outputFile.toAbsolutePath().getParent();
+            if (parent != null) createDirectories(parent);
+            writeString(arguments.outputFile, output, CREATE, WRITE, TRUNCATE_EXISTING);
+        } catch (final InvalidCommandLine e) {
+            System.err.println(e.getMessage());
+            System.exit(2);
+        } catch (final IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
     }
-
 }

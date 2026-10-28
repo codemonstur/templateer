@@ -26,9 +26,7 @@ public class FunctionsTest {
         f.deleteOnExit();
         Files.writeString(f.toPath(), "name=Caf\u00e9\n");
 
-        var args = new BobPlugin.Arguments();
-        args.modelFile = f.getAbsolutePath();
-        Map<String, Object> model = Functions.loadModel(args, Map.of());
+        Map<String, Object> model = Functions.loadModel(f.getAbsolutePath(), false, Map.of());
 
         assertEquals("Caf\u00e9", model.get("name"));
     }
@@ -39,10 +37,7 @@ public class FunctionsTest {
         f.deleteOnExit();
         Files.writeString(f.toPath(), "fromFile=yes\n");
 
-        var args = new BobPlugin.Arguments();
-        args.modelFile = f.getAbsolutePath();
-        args.loadEnv = true;
-        Map<String, Object> model = Functions.loadModel(args, Map.of("fromEnv", "yes"));
+        Map<String, Object> model = Functions.loadModel(f.getAbsolutePath(), true, Map.of("fromEnv", "yes"));
 
         assertEquals("yes", model.get("fromFile"));
         assertEquals("yes", model.get("fromEnv"));
