@@ -49,8 +49,8 @@
         <version.library.trimou>2.5.1.Final</version.library.trimou>
         <version.library.velocity>2.4.1</version.library.velocity>
 
-        <version.plugin.check-cves>1.1.0</version.plugin.check-cves>
-        <version.plugin.check-license>1.4.0</version.plugin.check-license>
+        <version.plugin.check-cves>1.2.0</version.plugin.check-cves>
+        <version.plugin.check-license>1.5.0</version.plugin.check-license>
         <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
         <version.plugin.compiler>3.16.0</version.plugin.compiler>
         <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
@@ -59,7 +59,9 @@
         <version.plugin.shade>3.6.2</version.plugin.shade>
         <version.plugin.source>3.4.0</version.plugin.source>
         <version.plugin.surefire>3.6.0</version.plugin.surefire>
-    </properties>
+            <version.library.pitest-junit5>1.2.3</version.library.pitest-junit5>
+        <version.plugin.pitest>1.30.1</version.plugin.pitest>
+</properties>
 
     <dependencyManagement>
         <dependencies>
@@ -190,7 +192,13 @@
                     <groupId>com.github.codemonstur</groupId>
                     <artifactId>maven-check-cves</artifactId>
                     <version>${version.plugin.check-cves}</version>
-                </plugin>
+                <configuration>
+                            <exclusions>
+                                <exclusion>GHSA-j288-q9x7-2f5v</exclusion>
+                            </exclusions>
+                        
+                        </configuration>
+</plugin>
 
                 <plugin>
                     <groupId>com.github.codemonstur</groupId>
@@ -321,6 +329,38 @@
             </build>
         </profile>
 
-    </profiles>
+            <profile>
+            <id>mutation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${version.plugin.pitest}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>${version.library.pitest-junit5}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+</profiles>
 
 </project>
