@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help clean build test coverage validate release-notes deploy mutation
 
-NAME=`xmllint --xpath "//project/artifactId/text()" templateer-cli/pom.xml`
+NAME=`xmllint --xpath "//project/artifactId/text()" cli/pom.xml`
 VERSION=`xmllint --xpath "//project/version/text()" pom.xml`
 PREVIOUS_TAG=`git tag | sort -r | head -n 1`
 
@@ -23,8 +23,8 @@ clean: ## Delete everything in ./target
 build: ## Runs a mvn clean package
 	@mvn -DskipTests clean package
 native: build ## Build a native binary with GraalVM
-	@native-image --no-fallback -jar templateer-cli/target/templateer.jar -o templateer-cli/target/templateer
-	@chmod +x templateer-cli/target/templateer
+	@native-image --no-fallback -jar cli/target/templateer.jar -o cli/target/templateer
+	@chmod +x cli/target/templateer
 
 test: ## Runs the tests
 	@mvn test
@@ -33,7 +33,7 @@ coverage: ## Run tests and generate a jacoco coverage report
 	@$(INFO) "Running tests and generating coverage report"
 	@mvn -Dstyle.color=always org.jacoco:jacoco-maven-plugin:0.8.15:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.15:report
 	@$(INFO) "Coverage report written to target/site/jacoco/index.html"
-	@output=$$(java src/build/CoverageSummary.java templateer-core/target/site/jacoco/jacoco.csv) || exit $$?; \
+	@output=$$(java src/build/CoverageSummary.java core/target/site/jacoco/jacoco.csv) || exit $$?; \
 	printf '%s\n' "$$output" | while IFS= read -r line; do $(INFO) "$$line"; done
 
 mutation: ## Run mutation tests on the unit tests
@@ -60,7 +60,7 @@ deploy: ## Clean, build and deploy a version to Github and Maven Central
 	@$(INFO) "Uploading to maven central"
 	@mvn clean deploy
 	@$(INFO) "Creating github release"
-	@gh release create $(NAME)-$(VERSION) templateer-cli/target/$(NAME).jar templateer-cli/target/$(NAME)-javadoc.jar templateer-cli/target/$(NAME)-sources.jar -F src/docs/releases/release-$(VERSION).txt
+	@gh release create $(NAME)-$(VERSION) cli/target/$(NAME).jar cli/target/$(NAME)-javadoc.jar cli/target/$(NAME)-sources.jar -F src/docs/releases/release-$(VERSION).txt
 	@$(INFO) "Tagging and pushing to github"
 	@git tag $(NAME)-$(VERSION)
 	@git push && git push --tags
